@@ -29,7 +29,7 @@ const MovieCard = ({item,handleClick}) => {
     return(
         <TouchableWithoutFeedback onPress={()=>handleClick(item)}>
             <Image source={require('../assets/thor.jpg')}
-            style={{width:width*0.6,height:height*0.4,borderRadius:5}}
+            style={{width:width*0.6,height:height*0.4,borderRadius:10}}
             />
         </TouchableWithoutFeedback>
     )

@@ -4,7 +4,7 @@ import { styleTheme } from '../theme'
 import { useNavigation } from '@react-navigation/native'
 
 var {width,height} = Dimensions.get('window')
-export default function MovieList({title,data}) {
+export default function MovieList({title,data,hideSeeAll}) {
     let movieName = 'Thor love and thunder'
     const navigation = useNavigation();
   return (
@@ -13,15 +13,20 @@ export default function MovieList({title,data}) {
         <Text style={{color:'white',fontSize:20}}>
             {title}
         </Text>
-        <TouchableOpacity>
-            <Text style={styleTheme.text}>See All</Text>
-        </TouchableOpacity>
+        {
+            !hideSeeAll && (
+                <TouchableOpacity>
+                <Text style={styleTheme.text}>See All</Text>
+            </TouchableOpacity>
+            )
+        }
+       
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{paddingHorizontal:15}}>
         {data.map((item, index)=>{
             
             return(
-                <TouchableWithoutFeedback key={index}  onPress={()=> navigation.navigate('Movie', item)}>
+                <TouchableWithoutFeedback key={index}  onPress={()=> navigation.push('Movie', item)}>
                     <View style={{marginRight:4}}>
                         <Image source={require('../assets/thor.jpg')}
                         style={{width:width*0.33,height:height*0.22}}
