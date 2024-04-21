@@ -7,36 +7,33 @@ import { styleTheme } from '../theme'
 import TrendingMovies from '../components/trendingMovies'
 import MovieList from '../components/movieList'
 import { useNavigation } from '@react-navigation/native'
-import {Load} from '../components/loading'
+import { Load } from '../components/loading'
 import { fetchTopRatedMovies, fetchTrendingMovies, fetchUpcomingMovies } from '../api/moviedb'
+
 export default function HomeScreen() {
     const [trending, setTrending] = useState([])
-
     const [upcoming, setUpcoming] = useState([])
     const [topRated, setTopRated] = useState([])
-    const [loader, setLoading] = useState(true)
+    
+    const [loading, setLoading] = useState(true)
     const navigation = useNavigation()
 
-    useEffect(()=>{
-        getTrendingMovies();
-        getUpcomingMovies();
-        getTopRatedMovies();
-    },[])
+    useEffect(() => {
+        const fetchData = async () => {
+            const trendingData = await fetchTrendingMovies();
+            const upcomingData = await fetchUpcomingMovies();
+            const topRatedData = await fetchTopRatedMovies();
+            
+            if (trendingData && trendingData.results) setTrending(trendingData.results);
+            if (upcomingData && upcomingData.results) setUpcoming(upcomingData.results);
+            if (topRatedData && topRatedData.results) setTopRated(topRatedData.results);
+            
+            setLoading(false);
+        };
 
-    const getTrendingMovies = async () =>{
-        const data = await fetchTrendingMovies();
-       
-        if(data && data.results) setTrending(data.results);
-        setLoading(false)
-    }
-    const getUpcomingMovies = async () =>{
-        const data = await fetchUpcomingMovies();
-        if(data && data.results) setUpcoming(data.results);
-    }
-    const getTopRatedMovies = async () =>{
-        const data = await fetchTopRatedMovies();
-        if(data && data.results) setTopRated(data.results);
-    }
+        fetchData();
+    }, []);
+
     return (
         <View style={styles.container}>
             <SafeAreaView style={{ marginBottom: 3 }}>
@@ -51,36 +48,32 @@ export default function HomeScreen() {
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
-            {loader ? (
+            
+            {loading ? (
                 <Load />
             ) : (
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 10 }}
                 >
-                    {trending.length>0 && <TrendingMovies data={trending} />}
-                    
+                    {trending.length > 0 && <TrendingMovies data={trending} />}
                     <MovieList title="Upcoming" data={upcoming} />
                     <MovieList title="Top Rated" data={topRated} />
                 </ScrollView>
             )}
-
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-
         flex: 1,
         backgroundColor: '#18181B'
-
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginHorizontal: 20
-
     }
 })
